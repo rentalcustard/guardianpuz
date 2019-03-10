@@ -3,13 +3,14 @@ from bs4 import BeautifulSoup
 import urllib2
 
 page = urllib2.urlopen("https://www.theguardian.com/crosswords/accessible/cryptic/27763").read()
-soup = BeautifulSoup(page)
+soup = BeautifulSoup(page, features='html.parser')
 clue_page = urllib2.urlopen("https://www.theguardian.com/crosswords/cryptic/27763").read()
-clue_soup = BeautifulSoup(clue_page)
+clue_soup = BeautifulSoup(clue_page, features='html.parser')
 p = puz.Puzzle()
 p.height = 15
 p.width = 15
 p.title = "test"
+p.author = "Foo"
 clues = []
 
 letter_to_number = {
@@ -30,14 +31,40 @@ letter_to_number = {
             "O": 15
         }
 
-for clue in clue_soup.find_all(attrs={"class": "crossword__clue"}):
+class Clue:
+    def __init__(self, number, direction, text):
+        self.number = number
+        self.direction = direction
+        self.text = text
+
+    def __lt__(self, other):
+        if self.number == other.number:
+            if self.direction == 'D':
+                return False
+            else:
+                return True
+        else:
+            return self.number < other.number
+
+clues = []
+for clue in clue_soup.find(attrs={"class": "crossword__clues--across"}).find_all(attrs={"class": "crossword__clue"}):
     #get clue number and text, need to do this for all across
     # then we need to build a list which is e.g. 1A - 1D - 2A - 3A - 4D - 5A
-    print clue.get_text()
-    clues.append(clue.get_text().split(")"))
+    clue_number = int(clue.find(attrs={"class": "crossword__clue__number"}).get_text())
+    clue_direction = "A"
+    clue_text = clue.find(attrs={"class": "crossword__clue__text"}).get_text()
+    clues.append(Clue(clue_number, clue_direction, clue_text))
 
-clues = sorted(clues, key=lambda c: c[0].replace('(', ''))
-print clues
+for clue in clue_soup.find(attrs={"class": "crossword__clues--down"}).find_all(attrs={"class": "crossword__clue"}):
+    #get clue number and text, need to do this for all across
+    # then we need to build a list which is e.g. 1A - 1D - 2A - 3A - 4D - 5A
+    clue_number = int(clue.find(attrs={"class": "crossword__clue__number"}).get_text())
+    clue_direction = "D"
+    clue_text = clue.find(attrs={"class": "crossword__clue__text"}).get_text()
+    clues.append(Clue(clue_number, clue_direction, clue_text))
+
+sorted_clue_texts = map(lambda c: c.text, sorted(clues))
+print sorted_clue_texts
 
 fill = []
 for row in soup.find_all(attrs={"class": "crossword__accessible-row-data"}):
@@ -48,10 +75,9 @@ for row in soup.find_all(attrs={"class": "crossword__accessible-row-data"}):
 
 fill = ''.join(fill)
 print fill
-print len(fill)
-        
+
 p.fill = fill
-p.clues = clues
+p.clues = sorted_clue_texts
 
 p.solution = fill.replace("-", "A")
 
