@@ -9,7 +9,6 @@ parser.add_argument('-t', '--type')
 parser.add_argument('number')
 
 args = parser.parse_args()
-print args
 
 crossword_number = args.number
 if args.type is None:
@@ -19,7 +18,6 @@ else:
 
 
 accessible_url = "https://www.theguardian.com/crosswords/accessible/" + crossword_type + "/" + crossword_number
-print accessible_url
 standard_url = "https://www.theguardian.com/crosswords/" + crossword_type + "/" + crossword_number
 
 page = urllib2.urlopen(accessible_url).read()
@@ -71,17 +69,28 @@ clues = []
 for clue in clue_soup.find(attrs={"class": "crossword__clues--across"}).find_all(attrs={"class": "crossword__clue"}):
     #get clue number and text, need to do this for all across
     # then we need to build a list which is e.g. 1A - 1D - 2A - 3A - 4D - 5A
-    clue_number = int(clue.find(attrs={"class": "crossword__clue__number"}).get_text())
     clue_direction = "A"
     clue_text = clue.find(attrs={"class": "crossword__clue__text"}).get_text()
+    clue_number_spec = clue.find(attrs={"class": "crossword__clue__number"}).get_text()
+    if "," in clue_number_spec:
+        clue_number = int(clue_number_spec.split(", ")[0])
+    else:
+        clue_number = int(clue_number_spec)
+        
     clues.append(Clue(clue_number, clue_direction, clue_text))
+
 
 for clue in clue_soup.find(attrs={"class": "crossword__clues--down"}).find_all(attrs={"class": "crossword__clue"}):
     #get clue number and text, need to do this for all across
     # then we need to build a list which is e.g. 1A - 1D - 2A - 3A - 4D - 5A
-    clue_number = int(clue.find(attrs={"class": "crossword__clue__number"}).get_text())
     clue_direction = "D"
     clue_text = clue.find(attrs={"class": "crossword__clue__text"}).get_text()
+    clue_number_spec = clue.find(attrs={"class": "crossword__clue__number"}).get_text()
+    if "," in clue_number_spec:
+        clue_number = int(clue_number_spec.split(", ")[0])
+    else:
+        clue_number = int(clue_number_spec)
+
     clues.append(Clue(clue_number, clue_direction, clue_text))
 
 sorted_clue_texts = map(lambda c: c.text, sorted(clues))
