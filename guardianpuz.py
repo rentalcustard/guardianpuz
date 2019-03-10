@@ -1,10 +1,17 @@
 import puz
 from bs4 import BeautifulSoup
 import urllib2
+import sys
 
-page = urllib2.urlopen("https://www.theguardian.com/crosswords/accessible/cryptic/27763").read()
+crossword_number = sys.argv[1]
+
+accessible_url = "https://www.theguardian.com/crosswords/accessible/cryptic/" + crossword_number
+standard_url = "https://www.theguardian.com/crosswords/cryptic/" + crossword_number
+
+page = urllib2.urlopen(accessible_url).read()
 soup = BeautifulSoup(page, features='html.parser')
-clue_page = urllib2.urlopen("https://www.theguardian.com/crosswords/cryptic/27763").read()
+clue_page = urllib2.urlopen(standard_url).read()
+
 clue_soup = BeautifulSoup(clue_page, features='html.parser')
 p = puz.Puzzle()
 p.height = 15
@@ -64,7 +71,6 @@ for clue in clue_soup.find(attrs={"class": "crossword__clues--down"}).find_all(a
     clues.append(Clue(clue_number, clue_direction, clue_text))
 
 sorted_clue_texts = map(lambda c: c.text, sorted(clues))
-print sorted_clue_texts
 
 fill = []
 for row in soup.find_all(attrs={"class": "crossword__accessible-row-data"}):
@@ -74,7 +80,6 @@ for row in soup.find_all(attrs={"class": "crossword__accessible-row-data"}):
     fill.append(''.join(row_text))
 
 fill = ''.join(fill)
-print fill
 
 p.fill = fill
 p.clues = sorted_clue_texts
