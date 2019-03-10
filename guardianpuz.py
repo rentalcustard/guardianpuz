@@ -16,8 +16,8 @@ clue_soup = BeautifulSoup(clue_page, features='html.parser')
 p = puz.Puzzle()
 p.height = 15
 p.width = 15
-p.title = "test"
-p.author = "Foo"
+p.title = "Guardian Cryptic Crossword No " + crossword_number
+p.author = clue_soup.find(attrs={"itemprop": "author"}).find(attrs={"itemprop": "name"}).get_text()
 clues = []
 
 letter_to_number = {
