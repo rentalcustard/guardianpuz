@@ -15,6 +15,10 @@ NUMBER is the number of the crossword you want to load, for example 27763. You c
 
 This creates a file named output.puz with your crossword, to open in the puz-reading program of your choice. I only test with cursewords because I'm lazy.
 
+## Example screenshot
+
+![cursewords running with a file created by GuardianPuz](doc/example.png)
+
 ## Things I'd love for this to do but haven't yet implemented
 
 * For non-prize crosswords, get the solution (i.e. press 'reveal all', read all the solution text. Does BS4 know how to javascript?)
