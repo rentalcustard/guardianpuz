@@ -2,11 +2,25 @@ import puz
 from bs4 import BeautifulSoup
 import urllib2
 import sys
+import argparse
 
-crossword_number = sys.argv[1]
+parser = argparse.ArgumentParser()
+parser.add_argument('-t', '--type')
+parser.add_argument('number')
 
-accessible_url = "https://www.theguardian.com/crosswords/accessible/cryptic/" + crossword_number
-standard_url = "https://www.theguardian.com/crosswords/cryptic/" + crossword_number
+args = parser.parse_args()
+print args
+
+crossword_number = args.number
+if args.type is None:
+    crossword_type = 'cryptic'
+else:
+    crossword_type = args.type
+
+
+accessible_url = "https://www.theguardian.com/crosswords/accessible/" + crossword_type + "/" + crossword_number
+print accessible_url
+standard_url = "https://www.theguardian.com/crosswords/" + crossword_type + "/" + crossword_number
 
 page = urllib2.urlopen(accessible_url).read()
 soup = BeautifulSoup(page, features='html.parser')
@@ -16,7 +30,7 @@ clue_soup = BeautifulSoup(clue_page, features='html.parser')
 p = puz.Puzzle()
 p.height = 15
 p.width = 15
-p.title = "Guardian Cryptic Crossword No " + crossword_number
+p.title = "Guardian " + crossword_type.title() + " Crossword No " + crossword_number
 p.author = clue_soup.find(attrs={"itemprop": "author"}).find(attrs={"itemprop": "name"}).get_text()
 clues = []
 

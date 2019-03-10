@@ -9,9 +9,10 @@ Given a [Guardian](https://www.guardian.co.uk/crosswords) cryptic crossword numb
 
 ## Usage
 
-`python guardianpuz.py <NUMBER>`
+`python guardianpuz.py <NUMBER> --type=TYPE`
 
 NUMBER is the number of the crossword you want to load, for example 27763. You can find it in the URL, e.g. https://www.theguardian.com/crosswords/cryptic/27763.
+TYPE is one of cryptic, prize, everyman, quiptic (I've only tested with prize and cryptic)
 
 This creates a file named output.puz with your crossword, to open in the puz-reading program of your choice. I only test with cursewords because I'm lazy.
 
@@ -22,7 +23,6 @@ This creates a file named output.puz with your crossword, to open in the puz-rea
 ## Things I'd love for this to do but haven't yet implemented
 
 * For non-prize crosswords, get the solution (i.e. press 'reveal all', read all the solution text. Does BS4 know how to javascript?)
-* Be able to fetch prize, quiptic, everyman, etc. crosswords
 * Have code that is not godawful and hacked together when I was too lazy to solve the Prize crossword, but not too lazy to do _something_.
 * Be distributed via pip
 * Have any kind of error handling at all
