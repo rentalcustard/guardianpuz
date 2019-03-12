@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import puz
 from bs4 import BeautifulSoup
 import urllib2
@@ -54,7 +55,7 @@ class Clue:
     def __init__(self, number, direction, text):
         self.number = number
         self.direction = direction
-        self.text = text
+        self.text = text.encode('iso-8859-1', 'ignore') #puzpy doesn't do unicode, even though it's 2019
 
     def __lt__(self, other):
         if self.number == other.number:
